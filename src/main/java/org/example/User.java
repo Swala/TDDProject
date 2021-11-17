@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.Objects;
+
 public class User {
     private String userName;
     private String password;
@@ -49,5 +51,13 @@ public class User {
 
     public String getToken() {
         return token;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return userName == user.userName && Objects.equals(password, user.password) && Objects.equals(token, user.token);
     }
 }

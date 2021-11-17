@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoginHandlerTest {
@@ -35,9 +38,9 @@ public class LoginHandlerTest {
 
     @Test
     void test_login_return_token_success() throws MissingTokenException{
-        String token = berit.getToken();
+        String token = loginHandler.login(berit.getUserName(), "123456");
         System.out.println("from test: " + token);
-        assertEquals(token, loginHandler.login("berit", "123456"));
+        assertEquals(token, berit.getToken());
     }
 
 

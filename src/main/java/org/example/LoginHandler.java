@@ -28,16 +28,15 @@ public class LoginHandler {
 
         for (User user : userList){
             if(user.getUserName().equals(uName)){
-                System.out.println("found user");
                 if(verifyPassword(password, user.getPassword(), user.getSalt())){
                     user.setLoggedIn(true);
                     token = user.getToken();
                 }
+                break;
             }
-            System.out.println("from loginhandler: " + user.getToken());
-            if(token == ""){
-                throw new MissingTokenException("Missing token");
-            }
+        }
+        if(token == ""){
+            throw new MissingTokenException("Missing token");
         }
         return token;
     }
