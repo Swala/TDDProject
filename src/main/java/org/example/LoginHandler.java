@@ -2,44 +2,53 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class LoginHandler {
     List<User> userList = new ArrayList<>();
     PasswordUtils passwordUtils;
-    String salt;
 
     public LoginHandler(PasswordUtils passwordUtils) {
         this.passwordUtils = passwordUtils;
-        this.salt = passwordUtils.generateSalt(512).get();
     }
 
     //method for creating new User and adding user to List
     public User addUser(String userName, String password) {
-        User user = new User(userName, password);
+        String salt = passwordUtils.generateSalt(512).get();
+        String token = passwordUtils.generateToken().get();
+
+        User user = new User(userName, passwordUtils.hashPassword(password, salt).get(), salt, token);
         userList.add(user);
+
         return user;
     }
 
-    public boolean login(String uName, String password){
-        boolean loginSuccess = false;
+    public String login(String uName, String password) throws MissingTokenException{
+        String token = "";
 
-            for (User user : userList){
-                if(user.getUserName().equals(uName)){
-                    if(verifyUser(user, password) == true){
-                        user.setLoggedIn(true);
-                        loginSuccess = user.getIsLoggedIn();
-                    }
+        for (User user : userList){
+            if(user.getUserName().equals(uName)){
+                System.out.println("found user");
+                if(verifyPassword(password, user.getPassword(), user.getSalt())){
+                    user.setLoggedIn(true);
+                    token = user.getToken();
                 }
             }
-            return loginSuccess;
+            System.out.println("from loginhandler: " + user.getToken());
+            if(token == ""){
+                throw new MissingTokenException("Missing token");
+            }
         }
+        return token;
+    }
 
 
-    private boolean verifyUser(User user, String password) {
-        String inputPassword = password;
-        String key = passwordUtils.hashPassword(user.getPassword(), salt).get();
+    public static boolean verifyPassword (String password, String key, String salt) {
+        PasswordUtils passwordEncrypter = new PasswordUtils();
+        Optional<String> optEncrypted = passwordEncrypter.hashPassword(password, salt);
+        if (!optEncrypted.isPresent()) return false;
 
-        return passwordUtils.verifyPassword(inputPassword, key, salt);
+        return optEncrypted.get().equals(key);
     }
 
 

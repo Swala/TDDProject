@@ -26,6 +26,12 @@ public class PasswordUtils {
         return Optional.of(Base64.getEncoder().encodeToString(salt)); //the salt used for below method
     }
 
+    public static Optional<String> generateToken() {
+        byte[] randomBytes = new byte[24];
+        RAND.nextBytes(randomBytes);
+        return Optional.of(Base64.getEncoder().encodeToString(randomBytes));
+    }
+
     private static final int ITERATIONS = 65536;
     private static final int KEY_LENGTH = 512;
     private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
@@ -54,12 +60,4 @@ public class PasswordUtils {
         }
     }
 
-    public static boolean verifyPassword (String password, String key, String salt) {
-        PasswordUtils passwordEncrypter = new PasswordUtils();
-        Optional<String> optEncrypted = passwordEncrypter.hashPassword(password, salt);
-        if (!optEncrypted.isPresent()) return false;
-
-        //System.out.println(optEncrypted.get().equals(key));
-        return optEncrypted.get().equals(key);
-    }
 }
