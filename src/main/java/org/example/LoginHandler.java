@@ -6,16 +6,17 @@ public class LoginHandler {
     List<User> userList = new ArrayList<>();
     PasswordUtils passwordUtils;
     Map<String, String> tokens = new HashMap<>(); //Key = userName, Value = token (List?)
+    Map<String, List<User>> resourceAccessList = new HashMap<>(); //key = resourceName, Value=user
 
     public LoginHandler(PasswordUtils passwordUtils) {
         this.passwordUtils = passwordUtils;
     }
 
     //method for creating new User and adding user to List
-    public User addUser(String userName, String password, String resource) {
+    public User addUser(String userName, String password) {
         String salt = passwordUtils.generateSalt(512).get();
 
-        User user = new User(userName, passwordUtils.hashPassword(password, salt).get(), salt, resource);
+        User user = new User(userName, passwordUtils.hashPassword(password, salt).get(), salt);
         userList.add(user);
 
         return user;
@@ -57,25 +58,38 @@ public class LoginHandler {
         return false;
     }
 
+    public void addUserToResourceAccess(String resource, List<User>users){
+        resourceAccessList.put(resource, users);
+    }
+
     public List<String> getUserPermissions(String token, String resource) {
         List<String>listOfUserPermissions = new ArrayList<>();
         String userName = "";
+        User thisUser = null;
 
         //find matching token in map tokens and get the key (username)
         for(Map.Entry<String, String> entry : tokens.entrySet()){
             if(Objects.equals(token, entry.getValue())){
-                userName = entry.getKey();
-            }
-        }
-        //System.out.println(userName);
-
-        // if username was found, get user permissions
-        if(userName  != ""){
-            for(User user : userList){
-                if(userName.equals(user.getUserName()) && resource == user.getResource()){
-                    listOfUserPermissions = user.getPermissions();
+                if(isTokenValid(token, entry.getKey())){
+                    userName = entry.getKey();
                 }
             }
+        }
+
+        //if username was found, get user from userlist
+        if(userName  != "") {
+            for (User user : userList) {
+                if (user.getUserName().equals(userName)) {
+                    thisUser = user;
+                }
+            }
+        }
+
+        // if user was found, get user from resourceAccessList
+        //key = resourceName, Value=user
+        if(resourceAccessList.get(resource).contains(thisUser)){
+            System.out.println("user was found in resource list");
+            listOfUserPermissions = thisUser.getPermissions();
         }
 
         return listOfUserPermissions;

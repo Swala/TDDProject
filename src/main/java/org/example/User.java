@@ -7,14 +7,12 @@ public class User {
     private String userName;
     private String password;
     private String salt;
-    private String resource;
     private List<String> permissions;
 
-    public User(String userName, String password, String salt, String resource) {
+    public User(String userName, String password, String salt) {
         this.userName = userName;
         this.password = password;
         this.salt = salt;
-        this.resource = resource;
         //this.permissions = permissions;
     }
 
@@ -46,11 +44,4 @@ public class User {
         return permissions;
     }
 
-    public String getResource() {
-        return resource;
-    }
-
-    public void setResource(String resource) {
-        this.resource = resource;
-    }
 }
