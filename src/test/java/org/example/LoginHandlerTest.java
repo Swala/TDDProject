@@ -4,9 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoginHandlerTest {
@@ -29,9 +28,9 @@ public class LoginHandlerTest {
 
     @Test
     void test_login_return_token_success() throws MissingTokenException{
-        Map <String, String>token = loginHandler.login(berit.getUserName(), "123456");
+        String token = loginHandler.login(berit.getUserName(), "123456").get(berit.getUserName());
 
-        assertEquals(token.get(berit.getUserName()),loginHandler.tokens.get(berit.getUserName()));
+        assertEquals(token,loginHandler.tokens.get(berit.getUserName()));
     }
 
 
@@ -43,7 +42,6 @@ public class LoginHandlerTest {
         assertEquals("Missing token", tokenException.getMessage());
     }
 
-    //tjänst som tar token och returnerar boolean om den är giltig??
     @Test
     void test_return_valid_token_success() throws MissingTokenException{
         Map <String, String> token = loginHandler.login(kalle.getUserName(), "password");
@@ -55,14 +53,12 @@ public class LoginHandlerTest {
     /*
     @Test
     void test_return_user_permissions_success(){
-        //based on token and resource, return permisions
-        //
+        //anrop med token och resurs ska returnera lista med rättigheter
 
-        assertEquals("READ", anna.getPermissions());
+
+        assertEquals(List.of("READ"), anna.getPermissions());
 
     }*/
-
-
 
 }
 

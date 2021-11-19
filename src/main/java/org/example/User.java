@@ -1,15 +1,18 @@
 package org.example;
 
+import java.util.List;
+
 public class User {
     private String userName;
     private String password;
     private String salt;
-    //List<String> Resource/Permission;
+    //private List<String> permissions;
 
     public User(String userName, String password, String salt) {
         this.userName = userName;
         this.password = password;
         this.salt = salt;
+        //this.permissions = permissions;
     }
 
     public String getUserName() {

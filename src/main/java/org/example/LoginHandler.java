@@ -48,7 +48,6 @@ public class LoginHandler {
 
     public void addToken(User user){
         tokens.put(user.getUserName(), passwordUtils.generateToken().get());
-
     }
 
     public boolean isTokenValid(String token, String userName) {
@@ -57,4 +56,5 @@ public class LoginHandler {
         }
         return false;
     }
+
 }
