@@ -21,9 +21,9 @@ public class LoginHandlerTest {
         passwordUtils = new PasswordUtils();
         loginHandler = new LoginHandler(passwordUtils);
 
-        anna = loginHandler.addUser("anna", "losen");
-        berit = loginHandler.addUser("berit", "123456");
-        kalle = loginHandler.addUser("kalle", "password");
+        anna = loginHandler.addUser("anna", "losen", List.of(Permission.READ.toString()));
+        berit = loginHandler.addUser("berit", "123456", List.of(Permission.READ.toString(), Permission.WRITE.toString()));
+        kalle = loginHandler.addUser("kalle", "password", List.of(Permission.EXECUTE.toString()));
     }
 
     @Test

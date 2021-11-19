@@ -9,11 +9,11 @@ public class User {
     private String salt;
     private List<String> permissions;
 
-    public User(String userName, String password, String salt) {
+    public User(String userName, String password, String salt, List<String> permissions) {
         this.userName = userName;
         this.password = password;
         this.salt = salt;
-        //this.permissions = permissions;
+        this.permissions = permissions;
     }
 
     public String getUserName() {

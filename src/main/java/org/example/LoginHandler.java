@@ -7,16 +7,18 @@ public class LoginHandler {
     PasswordUtils passwordUtils;
     Map<String, String> tokens = new HashMap<>(); //Key = userName, Value = token (List?)
     Map<String, List<User>> resourceAccessList = new HashMap<>(); //key = resourceName, Value=user
+    //Map<String, List<String>> permissionsBasedOnResource = new HashMap<>(); //key = resourceName, Value = permissions
 
     public LoginHandler(PasswordUtils passwordUtils) {
         this.passwordUtils = passwordUtils;
     }
 
     //method for creating new User and adding user to List
-    public User addUser(String userName, String password) {
+    public User addUser(String userName, String password, List<String> permissions) {
         String salt = passwordUtils.generateSalt(512).get();
 
-        User user = new User(userName, passwordUtils.hashPassword(password, salt).get(), salt);
+        //add permissions to user, and check resource before adding permissions?
+        User user = new User(userName, passwordUtils.hashPassword(password, salt).get(), salt, permissions);
         userList.add(user);
 
         return user;
@@ -86,9 +88,8 @@ public class LoginHandler {
         }
 
         // if user was found, get user from resourceAccessList
-        //key = resourceName, Value=user
         if(resourceAccessList.get(resource).contains(thisUser)){
-            System.out.println("user was found in resource list");
+            //System.out.println("user was found in resource list");
             listOfUserPermissions = thisUser.getPermissions();
         }
 
