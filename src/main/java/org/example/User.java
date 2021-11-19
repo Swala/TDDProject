@@ -1,20 +1,15 @@
 package org.example;
 
-import java.util.Objects;
-
 public class User {
     private String userName;
     private String password;
     private String salt;
-    private String token;
-    private boolean isLoggedIn;
+    //List<String> Resource/Permission;
 
-    public User(String userName, String password, String salt, String token) {
+    public User(String userName, String password, String salt) {
         this.userName = userName;
         this.password = password;
-        this.isLoggedIn = false;
         this.salt = salt;
-        this.token = token;
     }
 
     public String getUserName() {
@@ -33,14 +28,6 @@ public class User {
         this.password = password;
     }
 
-    public boolean getIsLoggedIn() {
-        return isLoggedIn;
-    }
-
-    public void setLoggedIn(boolean loggedIn) {
-        isLoggedIn = loggedIn;
-    }
-
     public String getSalt() {
         return salt;
     }
@@ -49,15 +36,4 @@ public class User {
         this.salt = salt;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return userName == user.userName && Objects.equals(password, user.password) && Objects.equals(token, user.token);
-    }
 }

@@ -10,8 +10,6 @@ import java.util.Base64;
 import java.util.Optional;
 
 public class PasswordUtils {
-
-    //method to generate salt
     private static final SecureRandom RAND = new SecureRandom();
     public static Optional<String> generateSalt (final int length) {
 
@@ -23,7 +21,7 @@ public class PasswordUtils {
         byte[] salt = new byte[length];
         RAND.nextBytes(salt);
 
-        return Optional.of(Base64.getEncoder().encodeToString(salt)); //the salt used for below method
+        return Optional.of(Base64.getEncoder().encodeToString(salt));
     }
 
     public static Optional<String> generateToken() {

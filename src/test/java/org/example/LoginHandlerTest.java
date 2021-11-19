@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,28 +19,19 @@ public class LoginHandlerTest {
 
     @BeforeEach
     void setUp(){
-
         passwordUtils = new PasswordUtils();
         loginHandler = new LoginHandler(passwordUtils);
 
         anna = loginHandler.addUser("anna", "losen");
         berit = loginHandler.addUser("berit", "123456");
         kalle = loginHandler.addUser("kalle", "password");
-
-    }
-
-    @Disabled
-    @Test
-    void test_login_success() throws MissingTokenException{
-        loginHandler.login("berit", "123456");
-        assertTrue(berit.getIsLoggedIn());
     }
 
     @Test
     void test_login_return_token_success() throws MissingTokenException{
-        String token = loginHandler.login(berit.getUserName(), "123456");
-        System.out.println("from test: " + token);
-        assertEquals(token, berit.getToken());
+        Map <String, String>token = loginHandler.login(berit.getUserName(), "123456");
+
+        assertEquals(token.get(berit.getUserName()),loginHandler.tokens.get(berit.getUserName()));
     }
 
 
@@ -52,5 +43,34 @@ public class LoginHandlerTest {
         assertEquals("Missing token", tokenException.getMessage());
     }
 
+    //tjänst som tar token och returnerar boolean om den är giltig??
+    @Test
+    void test_return_valid_token_success() throws MissingTokenException{
+        Map <String, String> token = loginHandler.login(kalle.getUserName(), "password");
+
+        assertTrue(loginHandler.isTokenValid(token.get(kalle.getUserName()), kalle.getUserName()));
+        assertFalse(loginHandler.isTokenValid("TTTTTT", kalle.getUserName()));
+    }
+
+    /*
+    @Test
+    void test_return_user_permissions_success(){
+        //based on token and resource, return permisions
+        //
+
+        assertEquals("READ", anna.getPermissions());
+
+    }*/
+
+
 
 }
+
+/*
+ @Disabled
+    @Test
+    void test_login_success() throws MissingTokenException{
+        loginHandler.login("berit", "123456");
+        assertTrue(berit.getIsLoggedIn());
+    }
+     */
