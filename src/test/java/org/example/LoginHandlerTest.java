@@ -55,7 +55,7 @@ public class LoginHandlerTest {
         //anrop med token och resurs ska returnera lista med rättigheter
         String token = loginHandler.login(anna.getUserName(), "losen").get(anna.getUserName());
 
-        List<String> permissions = loginHandler.getUserPermissions(token, Resource.ACCOUNT.toString(), anna);
+        List<String> permissions = loginHandler.getUserPermissions(token, Resource.ACCOUNT.toString());
 
         assertEquals(List.of("READ"), anna.getPermissions());
 

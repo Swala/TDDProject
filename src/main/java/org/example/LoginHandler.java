@@ -57,11 +57,25 @@ public class LoginHandler {
         return false;
     }
 
-    public List<String> getUserPermissions(String token, String resource, User user) {
+    public List<String> getUserPermissions(String token, String resource) {
         List<String>listOfUserPermissions = new ArrayList<>();
+        String userName = "";
 
-        if(token == tokens.get(user.getUserName()) && resource == user.getResource()){
-            listOfUserPermissions = user.getPermissions();
+        //find matching token in map tokens and get the key (username)
+        for(Map.Entry<String, String> entry : tokens.entrySet()){
+            if(Objects.equals(token, entry.getValue())){
+                userName = entry.getKey();
+            }
+        }
+        //System.out.println(userName);
+
+        // if username was found, get user permissions
+        if(userName  != ""){
+            for(User user : userList){
+                if(userName.equals(user.getUserName()) && resource == user.getResource()){
+                    listOfUserPermissions = user.getPermissions();
+                }
+            }
         }
 
         return listOfUserPermissions;
