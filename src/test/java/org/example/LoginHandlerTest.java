@@ -21,9 +21,9 @@ public class LoginHandlerTest {
         passwordUtils = new PasswordUtils();
         loginHandler = new LoginHandler(passwordUtils);
 
-        anna = loginHandler.addUser("anna", "losen");
-        berit = loginHandler.addUser("berit", "123456");
-        kalle = loginHandler.addUser("kalle", "password");
+        anna = loginHandler.addUser("anna", "losen", Resource.ACCOUNT.toString());
+        berit = loginHandler.addUser("berit", "123456", Resource.ACCOUNT.toString());
+        kalle = loginHandler.addUser("kalle", "password", Resource.PROVISION_CALC.toString());
     }
 
     @Test
@@ -50,15 +50,16 @@ public class LoginHandlerTest {
         assertFalse(loginHandler.isTokenValid("TTTTTT", kalle.getUserName()));
     }
 
-    /*
     @Test
-    void test_return_user_permissions_success(){
+    void test_return_user_permissions_success() throws MissingTokenException{
         //anrop med token och resurs ska returnera lista med rättigheter
+        String token = loginHandler.login(anna.getUserName(), "losen").get(anna.getUserName());
 
+        List<String> permissions = loginHandler.getUserPermissions(token, Resource.ACCOUNT.toString(), anna);
 
         assertEquals(List.of("READ"), anna.getPermissions());
 
-    }*/
+    }
 
 }
 

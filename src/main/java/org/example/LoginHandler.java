@@ -12,10 +12,10 @@ public class LoginHandler {
     }
 
     //method for creating new User and adding user to List
-    public User addUser(String userName, String password) {
+    public User addUser(String userName, String password, String resource) {
         String salt = passwordUtils.generateSalt(512).get();
 
-        User user = new User(userName, passwordUtils.hashPassword(password, salt).get(), salt);
+        User user = new User(userName, passwordUtils.hashPassword(password, salt).get(), salt, resource);
         userList.add(user);
 
         return user;
@@ -57,4 +57,13 @@ public class LoginHandler {
         return false;
     }
 
+    public List<String> getUserPermissions(String token, String resource, User user) {
+        List<String>listOfUserPermissions = new ArrayList<>();
+
+        if(token == tokens.get(user.getUserName()) && resource == user.getResource()){
+            listOfUserPermissions = user.getPermissions();
+        }
+
+        return listOfUserPermissions;
+    }
 }
