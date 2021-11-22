@@ -1,9 +1,7 @@
 package org.example;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,9 +26,10 @@ public class LoginHandlerTest {
 
     @Test
     void test_login_return_token_success() throws MissingTokenException{
-        String token = loginHandler.login(berit.getUserName(), "123456").get(berit.getUserName());
-
-        assertEquals(token,loginHandler.tokens.get(berit.getUserName()));
+        //String token = loginHandler.login(berit.getUserName(), "123456").get(berit.getUserName());
+        String token = loginHandler.login(berit.getUserName(), "123456");
+        assertEquals(token,loginHandler.tokens.get(berit.getUserName()).getToken());
+        //assertEquals(token, loginHandler.userToken.getToken());
     }
 
 
@@ -44,9 +43,11 @@ public class LoginHandlerTest {
 
     @Test
     void test_return_valid_token_success() throws MissingTokenException{
-        Map <String, String> token = loginHandler.login(kalle.getUserName(), "password");
+        //Map <String, String> token = loginHandler.login(kalle.getUserName(), "password");
+        String token = loginHandler.login(kalle.getUserName(), "password");
 
-        assertTrue(loginHandler.isTokenValid(token.get(kalle.getUserName()), kalle.getUserName()));
+        //assertTrue(loginHandler.isTokenValid(token.get(kalle.getUserName()), kalle.getUserName()));
+        assertTrue(loginHandler.isTokenValid(token, kalle.getUserName()));
         assertFalse(loginHandler.isTokenValid("TTTTTT", kalle.getUserName()));
     }
 
@@ -57,7 +58,9 @@ public class LoginHandlerTest {
         loginHandler.addUserToResourceAccess(Resource.ACCOUNT.toString(), List.of(anna, berit));
         loginHandler.addUserToResourceAccess(Resource.PROVISION_CALC.toString(), List.of(kalle));
 
-        String token = loginHandler.login(anna.getUserName(), "losen").get(anna.getUserName());
+        //String token = loginHandler.login(anna.getUserName(), "losen").get(anna.getUserName());
+        String token = loginHandler.login(anna.getUserName(), "losen");
+        System.out.println("test toke: " + token);
         List<String> permissions = loginHandler.getUserPermissions(token, Resource.ACCOUNT.toString());
 
         assertEquals(List.of("READ"), permissions);
@@ -66,11 +69,3 @@ public class LoginHandlerTest {
 
 }
 
-/*
- @Disabled
-    @Test
-    void test_login_success() throws MissingTokenException{
-        loginHandler.login("berit", "123456");
-        assertTrue(berit.getIsLoggedIn());
-    }
-     */
