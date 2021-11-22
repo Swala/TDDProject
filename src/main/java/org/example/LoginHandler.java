@@ -1,13 +1,13 @@
 package org.example;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LoginHandler {
     List<User> userList = new ArrayList<>();
     PasswordUtils passwordUtils;
     //Map<String, String> tokens = new HashMap<>(); //Key = userName, Value = token (List?)
-    Map<String, Token> tokens = new HashMap<>(); //Key = userName, Value = Object token (List?)
-    Token userToken;
+    Map<Integer, Token> tokens = new HashMap<>(); //Key = tokenId, Value = Object token
     Map<String, List<User>> resourceAccessList = new HashMap<>(); //key = resourceName, Value=user
 
     public LoginHandler(PasswordUtils passwordUtils) {
@@ -26,10 +26,11 @@ public class LoginHandler {
 
     //return string token, redo token object
     public String login(String uName, String password) throws MissingTokenException{
+        int tokenId = 0;
         for (User user : userList){
             if(user.getUserName().equals(uName)){
                 if(verifyPassword(password, user.getPassword(), user.getSalt())){
-                    addToken(user);
+                    tokenId = addToken(user);
                 }
                 break;
             }
@@ -37,8 +38,7 @@ public class LoginHandler {
         if(tokens.isEmpty()){
             throw new MissingTokenException("Missing token");
         }
-        //return tokens;
-        return tokens.get(uName).getToken();
+        return tokens.get(tokenId).getToken();
         //return userToken.getToken();
     }
 
@@ -50,11 +50,13 @@ public class LoginHandler {
         return optEncrypted.get().equals(key);
     }
 
-    public void addToken(User user){
+    public int addToken(User user){
         //tokens.put(user.getUserName(), passwordUtils.generateToken().get());
-        String testToken = passwordUtils.generateToken().get();
-        userToken = new Token(testToken, user);
-        tokens.put(user.getUserName(), userToken);
+
+        Token userToken = new Token(passwordUtils.generateToken().get(), user);
+        tokens.put(userToken.getTokenId(), userToken);
+
+        return userToken.getTokenId();
 
     }
 
@@ -62,34 +64,50 @@ public class LoginHandler {
         resourceAccessList.put(resource, users);
     }
 
-    public boolean isTokenValid(String token, String userName) {
-        //if(token == tokens.get(userName)){
-        if(token == userToken.getToken()){
+    public boolean isTokenValid(String token) { // String userName
+        /*if(token == tokens.get(userName)){
             return true;
+        }*/
+
+        for (Map.Entry <Integer, Token> entry : tokens.entrySet()){
+            if(entry.getValue().getToken().equals(token)){
+                return true;
+            }
         }
         return false;
+    }
+
+    public int getTokenId(String token){
+        int tokenID = 0;
+
+        for (Map.Entry <Integer, Token> entry : tokens.entrySet()){
+            if(entry.getValue().getToken().equals(token)){
+                tokenID = entry.getKey();
+            }
+        }
+
+        return tokenID;
     }
 
     public List<String> getUserPermissions(String token, String resource) {
         List<String>listOfUserPermissions = new ArrayList<>();
         String userName = "";
         User thisUser = null;
-        System.out.println("in getPermissions");
 
-        //find matching token in map tokens and get the key (username)
-        for(Map.Entry<String, Token> entry : tokens.entrySet()){
+        //find matching token in map tokens and get the user)
+        for(Map.Entry<Integer, Token> entry : tokens.entrySet()){
             if(Objects.equals(token, entry.getValue().getToken())){
-                if(isTokenValid(token, entry.getKey())){
-                    userName = entry.getKey();
-                    System.out.println(entry.getKey());
+                if(isTokenValid(token)){ //entry.getKey()
+                    //userName = entry.getKey();
+                    thisUser = entry.getValue().getUser();
                 }
             }
         }
 
         //if username was found, get user from userList
-        if(userName  != "") {
+        if(thisUser != null) {
             for (User user : userList) {
-                if (user.getUserName().equals(userName) && resourceAccessList.get(resource).contains(user)) {
+                if (user == thisUser && resourceAccessList.get(resource).contains(user)) {
                     //thisUser = user;
                     listOfUserPermissions = user.getPermissions();
                 }
@@ -105,10 +123,14 @@ public class LoginHandler {
     }
 
     public class Token{
+        int tokenId;
         String token;
         User user;
 
+        AtomicInteger tokenIDCounter = new AtomicInteger(0);
+
         public Token(String token, User user) {
+            this.tokenId = tokenIDCounter.incrementAndGet();
             this.token = token;
             this.user = user;
         }
@@ -119,6 +141,10 @@ public class LoginHandler {
 
         public User getUser() {
             return user;
+        }
+
+        public int getTokenId() {
+            return tokenId;
         }
     }
 

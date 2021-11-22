@@ -28,8 +28,10 @@ public class LoginHandlerTest {
     void test_login_return_token_success() throws MissingTokenException{
         //String token = loginHandler.login(berit.getUserName(), "123456").get(berit.getUserName());
         String token = loginHandler.login(berit.getUserName(), "123456");
-        assertEquals(token,loginHandler.tokens.get(berit.getUserName()).getToken());
-        //assertEquals(token, loginHandler.userToken.getToken());
+        int tokenID = loginHandler.getTokenId(token);
+
+        //assertEquals(token,loginHandler.tokens.get(berit.getUserName()).getToken());
+        assertEquals(token, loginHandler.tokens.get(tokenID).getToken()); //How do I get the tokenId? add method?
     }
 
 
@@ -47,8 +49,8 @@ public class LoginHandlerTest {
         String token = loginHandler.login(kalle.getUserName(), "password");
 
         //assertTrue(loginHandler.isTokenValid(token.get(kalle.getUserName()), kalle.getUserName()));
-        assertTrue(loginHandler.isTokenValid(token, kalle.getUserName()));
-        assertFalse(loginHandler.isTokenValid("TTTTTT", kalle.getUserName()));
+        assertTrue(loginHandler.isTokenValid(token)); //kalle.getUserName()
+        assertFalse(loginHandler.isTokenValid("TTTTTT"));
     }
 
     @Test
@@ -60,7 +62,6 @@ public class LoginHandlerTest {
 
         //String token = loginHandler.login(anna.getUserName(), "losen").get(anna.getUserName());
         String token = loginHandler.login(anna.getUserName(), "losen");
-        System.out.println("test toke: " + token);
         List<String> permissions = loginHandler.getUserPermissions(token, Resource.ACCOUNT.toString());
 
         assertEquals(List.of("READ"), permissions);
