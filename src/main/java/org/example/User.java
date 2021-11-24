@@ -1,6 +1,5 @@
 package org.example;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 
 public class User {
